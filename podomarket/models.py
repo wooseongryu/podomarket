@@ -1,5 +1,9 @@
+from secrets import choice
+from tkinter import CASCADE
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.forms import CharField, DateTimeField, ImageField
+from django.core.validators import MinValueValidator
 from podomarket.validators import validate_no_special_characters
 
 class User(AbstractUser):
@@ -24,3 +28,27 @@ class User(AbstractUser):
     def __str__(self):
         return self.email
         
+class Post(models.Model):
+    title = models.CharField(max_length=60)
+    item_price = models.IntegerField(validators=[MinValueValidator(1)])
+    
+    condition = [
+        ('새제품', '새제품'),
+        ('최상', '최상'),
+        ('상', '상'),
+        ('중', '중'),
+        ('하', '하'),
+    ]
+
+    item_condition = models.CharField(max_length=10, choices=condition)
+    item_details = models.TextField(blank=True)
+    image1 = models.ImageField(upload_to="item_pics")
+    image2 = models.ImageField(upload_to="item_pics", blank=True)
+    image3 = models.ImageField(upload_to="item_pics", blank=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    dt_created = models.DateTimeField(auto_now_add=True)
+    dt_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+
