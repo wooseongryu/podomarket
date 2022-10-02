@@ -9,13 +9,13 @@
   {% csrf_token %}
   <div class="title">
     {{form.title|add_class:"podo-input"|attr:"placeholder:제목"|add_error_class:"error"}}
-    {% for error in form.title.erros %}
+    {% for error in form.title.errors %}
       <div class="error-message">{{error}}</div>
     {% endfor %}
   </div>
   <div class="price">
     {{form.item_price|add_class:"podo-input"|attr:"placeholder:판매가격"|add_error_class:"error"}}
-    {% for error in form.item_price.erros %}
+    {% for error in form.item_price.errors %}
       <div class="error-message">{{error}}</div>
     {% endfor %}
   </div>
@@ -25,13 +25,13 @@
         {{radio}}
       {% endfor %}
     </div>
-    {% for error in form.item_condition.erros %}
+    {% for error in form.item_condition.errors %}
       <div class="error-message">{{error}}</div>
     {% endfor %}
   </div>
   <div class="detail">
     {{form.item_details|add_class:"podo-input"|attr:"placeholder:상세 정보"|add_error_class:"error"}}
-    {% for error in form.title.erros %}
+    {% for error in form.title.errors %}
       <div class="error-message">{{error}}</div>
     {% endfor %}
   </div>
@@ -41,7 +41,7 @@
         {{form.image1}}
       </div>
     </div>
-    {% for error in form.image1.erros %}
+    {% for error in form.image1.errors %}
       <div class="error-message">{{error}}</div>
     {% endfor %}
   </div>
@@ -51,7 +51,7 @@
         {{form.image2}}
       </div>
     </div>
-    {% for error in form.image2.erros %}
+    {% for error in form.image2.errors %}
       <div class="error-message">{{error}}</div>
     {% endfor %}
   </div>
@@ -61,7 +61,7 @@
         {{form.image3}}
       </div>
     </div>
-    {% for error in form.image3.erros %}
+    {% for error in form.image3.errors %}
       <div class="error-message">{{error}}</div>
     {% endfor %}
   </div>
