@@ -8,6 +8,11 @@ urlpatterns = [
         views.PostDetailView.as_view(),
         name='post-detail',    
     ),
+    path(
+        'posts/new/',
+        views.PostCreateView.as_view(),
+        name='post-create',
+    ),
 ]
 
 

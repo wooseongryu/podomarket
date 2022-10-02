@@ -1,0 +1,73 @@
+{% extends "podomarket_base/base_with_navbar.html" %}
+
+{% load widget_tweaks %}
+
+{% block title %}새 게시글 작성 | 포도마켓{% endblock title %}
+
+{% block content %}
+<form class="post-form" method="post" autocomplete="off", enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="title">
+    {{form.title|add_class:"podo-input"|attr:"placeholder:제목"|add_error_class:"error"}}
+    {% for error in form.title.erros %}
+      <div class="error-message">{{error}}</div>
+    {% endfor %}
+  </div>
+  <div class="price">
+    {{form.item_price|add_class:"podo-input"|attr:"placeholder:판매가격"|add_error_class:"error"}}
+    {% for error in form.item_price.erros %}
+      <div class="error-message">{{error}}</div>
+    {% endfor %}
+  </div>
+  <div class="condition">
+    <div class="radios">
+      {% for radio in form.item_condition %}
+        {{radio}}
+      {% endfor %}
+    </div>
+    {% for error in form.item_condition.erros %}
+      <div class="error-message">{{error}}</div>
+    {% endfor %}
+  </div>
+  <div class="detail">
+    {{form.item_details|add_class:"podo-input"|attr:"placeholder:상세 정보"|add_error_class:"error"}}
+    {% for error in form.title.erros %}
+      <div class="error-message">{{error}}</div>
+    {% endfor %}
+  </div>
+  <div class="file">
+    <div class="podo-input file-input">
+      <div class="file-content">
+        {{form.image1}}
+      </div>
+    </div>
+    {% for error in form.image1.erros %}
+      <div class="error-message">{{error}}</div>
+    {% endfor %}
+  </div>
+  <div class="file">
+    <div class="podo-input file-input">
+      <div class="file-content">
+        {{form.image2}}
+      </div>
+    </div>
+    {% for error in form.image2.erros %}
+      <div class="error-message">{{error}}</div>
+    {% endfor %}
+  </div>
+  <div class="file">
+    <div class="podo-input file-input">
+      <div class="file-content">
+        {{form.image3}}
+      </div>
+    </div>
+    {% for error in form.image3.erros %}
+      <div class="error-message">{{error}}</div>
+    {% endfor %}
+  </div>
+  <div class="buttons">
+    <a class="podo-button large secondary cancel" href="{% url 'index' %}">취소</a>
+    <button class="podo-button large primary submit" type="submit">완료</button>
+  </div>
+</form>
+{% endblock content %}
