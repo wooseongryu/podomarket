@@ -1,23 +1,59 @@
-<navbar>
-    {% if user.is_authenticated %}
-        <a href="{% url 'account_logout' %}">로그아웃</a>
-    {% else %}
-        <a href="{% url 'account_login' %}">로그인</a>
-        <a href="{% url 'account_signup' %}">회원가입</a>
-    {% endif %}
-</navbar>
+{% extends "podomarket_base/base_with_navbar.html" %}
 
-<h1>홈페이지</h1>
+{% load static %}
+{% load humanize %}
 
-{% if user.is_authenticated %}
-    <p>
-        안녕하세요, {{user.nickname}}님!<br>
-        카카오 ID는 {{user.kakao_id}}입니다<br>
-        주소는 {{user.address}}입니다.
-    </p>
-    <p>
-        <a href="{% url 'account_change_password' %}">비밀번호 변경</a>
-    </p>
-{% else %}
-    <p>로그아웃된 상태입니다.</p>
-{% endif %}
+{% block content %}
+<div class="post-list">
+  <div class="header">
+    <h2>중고 상품</h2>
+    <a class="link" href="#">
+      <img class="pen-icon" src="{% static 'podomarket/icons/ic-pen.svg' %}" alt="pen icon">
+      <span>글쓰기</span>
+    </a>
+  </div>
+
+  <div class="posts">
+    {% for post in posts %}
+    <div class="podo-card post">
+      <img class="thumb" src="{{post.image1.url}}" alt="썸네일 이미지">
+      <div class="content">
+        <h2 class="title">{{post.title}}</h2>
+        <div class="price-and-status">
+          <span class="price">
+            {{post.item_price|intcomma}}
+          </span>
+        </div>
+        <div class="meta">
+          {{post.dt_created|date:"Y.m.d"}}&nbsp;|&nbsp;{{post.author.address}}
+        </div>
+        <a class="podo-button primary button" href="#">자세히보기</a>
+      </div>
+    </div>
+    {% empty %}
+      <p class="empty">판매중인 상품이 없어요 :(</p>
+    {% endfor %}
+    
+  {% if is_paginated %}
+    <ul class="pagination">
+      {% if page_obj.has_previous %}
+        <li><a href="?page=1">처음</a></li>
+        <li><a href="?page={{ page_obj.previous_page_number }}">이전</a></li>
+      {% endif %}
+
+      {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+          <li class="current">{{ num }}</li>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+          <li><a href="?page={{ num }}">{{ num }}</a></li>
+        {% endif %}
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+        <li><a href="?page={{ page_obj.next_page_number }}">다음</a></li>
+        <li><a href="?page={{ page_obj.paginator.num_pages }}">마지막</a></li>
+      {% endif %}
+    </ul>
+  {% endif %}
+</div>
+{% endblock content %}
