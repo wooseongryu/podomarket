@@ -78,6 +78,13 @@
       <div class="error-message">{{error}}</div>
     {% endfor %}
   </div>
+  <div class="is-sold">
+    <label for="{{ form.is_sold.id_for_label }}">거래 완료</label>
+    {{ form.is_sold }}
+    {% for error in form.is_sold.errors %}
+      <div class="error-message">{{ error }}</div>
+    {% endfor %}
+  </div>
   <div class="buttons">
     <a class="podo-button large secondary cancel" href="{% url 'post-detail' post.id %}">취소</a>
     <button class="podo-button large primary submit" type="submit">완료</button>
