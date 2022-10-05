@@ -7,6 +7,7 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
 )
+from braces.views import LoginRequiredMixin
 from allauth.account.views import PasswordChangeView
 from .models import Post
 from .forms import PostCreateForm, PostUpdateForm
@@ -22,7 +23,7 @@ class IndexView(ListView):
     paginate_by = 8
     ordering = ["-dt_updated"]
 
-class PostDetailView(DetailView):
+class PostDetailView(LoginRequiredMixin, DetailView):
     model = Post
     template_name = 'podomarket/post_detail.html'
     pk_url_kwarg = 'post_id'
