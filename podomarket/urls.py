@@ -23,6 +23,11 @@ urlpatterns = [
         views.PostDeleteView.as_view(),
         name='post-delete',
     ),
+    path(
+        'users/<int:user_id>/',
+        views.ProfileView.as_view(),
+        name='profile',
+    )
 ]
 
 

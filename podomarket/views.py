@@ -10,7 +10,7 @@ from django.views.generic import (
 from braces.views import LoginRequiredMixin, UserPassesTestMixin
 from allauth.account.views import PasswordChangeView
 from allauth.account.models import EmailAddress
-from .models import Post
+from .models import Post, User
 from .forms import PostCreateForm, PostUpdateForm
 from .functions import confirmation_required_redirect
 
@@ -76,6 +76,18 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self, user):
         post = self.get_object()
         return post.author == user
+
+class ProfileView(DetailView):
+    model = User
+    template_name = 'podomarket/profile.html'
+    pk_url_kwarg = 'user_id'
+    context_object_name = "profile_user"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_id = self.kwargs.get('user_id')
+        context["user_posts"] = Post.objects.filter(author_id=user_id).order_by("-dt_created")[:8]
+        return context
 
 class CustomPasswordChangeView(PasswordChangeView):
     def get_success_url(self):
