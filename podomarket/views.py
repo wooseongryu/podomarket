@@ -25,7 +25,7 @@ class IndexView(ListView):
     paginate_by = 8
 
     def get_queryset(self):
-        return Post.objects.filter(is_sold=False).order_by('-dt_updated')
+        return Post.objects.filter(is_sold=False)
 
 class PostDetailView(LoginRequiredMixin, DetailView):
     model = Post
@@ -88,7 +88,7 @@ class ProfileView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user_id = self.kwargs.get('user_id')
-        context["user_posts"] = Post.objects.filter(author_id=user_id).order_by("-dt_created")[:8]
+        context["user_posts"] = Post.objects.filter(author_id=user_id)[:8]
         return context
 
 class UserPostListView(ListView):
@@ -99,7 +99,7 @@ class UserPostListView(ListView):
 
     def get_queryset(self):
         user_id = self.kwargs.get("user_id")
-        return Post.objects.filter(author_id=user_id).order_by('dt_created')
+        return Post.objects.filter(author_id=user_id)
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
