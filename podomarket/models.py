@@ -66,7 +66,7 @@ class Post(models.Model):
     dt_updated = models.DateTimeField(auto_now=True)
     is_sold = models.BooleanField(default=False)
 
-    likes = GenericRelation('Like')
+    likes = GenericRelation('Like', related_query_name='post')
 
     def __str__(self):
         return self.title
@@ -85,7 +85,7 @@ class Comment(models.Model):
         related_name='comments'
     )
 
-    likes = GenericRelation('Like')
+    likes = GenericRelation('Like', related_query_name='comment')
 
     def __str__(self):
         return self.content[:30]
