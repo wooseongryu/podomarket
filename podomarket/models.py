@@ -3,7 +3,7 @@ from tkinter import CASCADE
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.forms import CharField, DateTimeField, ImageField
 from django.core.validators import MinValueValidator
 from podomarket.validators import validate_no_special_characters
@@ -31,7 +31,11 @@ class User(AbstractUser):
         upload_to="profile_pics"
     )
 
-    following = models.ManyToManyField('self', symmetrical=False)
+    following = models.ManyToManyField(
+        'self', 
+        symmetrical=False,
+        related_name='followers'
+    )
 
     def __str__(self):
         return self.email
@@ -53,10 +57,16 @@ class Post(models.Model):
     image1 = models.ImageField(upload_to="item_pics")
     image2 = models.ImageField(upload_to="item_pics", blank=True)
     image3 = models.ImageField(upload_to="item_pics", blank=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(
+        User, 
+        on_delete=models.CASCADE,
+        related_name='posts'
+    )
     dt_created = models.DateTimeField(auto_now_add=True)
     dt_updated = models.DateTimeField(auto_now=True)
     is_sold = models.BooleanField(default=False)
+
+    likes = GenericRelation('Like')
 
     def __str__(self):
         return self.title
@@ -69,7 +79,13 @@ class Comment(models.Model):
     dt_created = models.DateTimeField(auto_now_add=True)
     dt_updated = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post = models.ForeignKey(
+        Post, 
+        on_delete=models.CASCADE,
+        related_name='comments'
+    )
+
+    likes = GenericRelation('Like')
 
     def __str__(self):
         return self.content[:30]
