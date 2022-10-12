@@ -119,7 +119,7 @@ a.podo-button {
   background-color: var(--button-secondary-background);
 }
 
-.podo-button.secondary:hover {
+.podo-button.secondary:hover:not(:disabled) {
   color: var(--button-secondary-hover);
 }
 
@@ -162,6 +162,10 @@ a.podo-button {
 
 .podo-button.darkgray {
   background-color: var(--button-darkgray-background);
+}
+
+.podo-button:disabled {
+  cursor: not-allowed;
 }
 
 .podo-input {
@@ -265,7 +269,6 @@ textarea.podo-input {
   color: var(--noti-purple);
   background-color: var(--noti-purple-background);
 }
-
 
 a.podo-link {
   color: var(--link);
