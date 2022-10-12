@@ -2,6 +2,7 @@
 
 {% load static %}
 {% load humanize %}
+{% load widget_tweaks %}
 
 {% block title %}{{ post.title }} | 포도마켓{% endblock title %}
 
@@ -69,6 +70,20 @@
       <span> {{post.comments.count}}</span>
     </div>
   </div>
+
+  <form class="comment-create-form" action="#" method="post">
+    {% csrf_token %}
+    {% if user.is_authenticated %}
+      {{ form.content|attr:"placeholder:댓글 내용을 입력해주세요."|add_class:"podo-input" }}      
+      <button class="podo-button" type="submit">등록</button>
+    {% else %}
+      <a href="{% url 'account_login'%}?next={% url 'post-detail' post.id %}">
+        {{ form.content|attr:"placeholder:댓글을 작성하려면 로그인이 필요합니다."|add_class:"podo-input"|attr:"disabled" }}      
+      </a>
+      <button class="podo-button secondary" type="submit" disabled>등록</button>
+    {% endif %}
+  </form>
+
   {% for comment in post.comments.all %}
     <div class="comment">
       <div class="comment-header">

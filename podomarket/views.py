@@ -11,7 +11,12 @@ from braces.views import LoginRequiredMixin, UserPassesTestMixin
 from allauth.account.views import PasswordChangeView
 from allauth.account.models import EmailAddress
 from .models import Post, User
-from .forms import PostCreateForm, PostUpdateForm, ProfileForm
+from .forms import (
+    PostCreateForm, 
+    PostUpdateForm, 
+    ProfileForm,
+    CommentForm,
+)
 from .functions import confirmation_required_redirect
 
 
@@ -27,10 +32,15 @@ class IndexView(ListView):
     def get_queryset(self):
         return Post.objects.filter(is_sold=False)
 
-class PostDetailView(LoginRequiredMixin, DetailView):
+class PostDetailView(DetailView):
     model = Post
     template_name = 'podomarket/post_detail.html'
     pk_url_kwarg = 'post_id'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = CommentForm()
+        return context
 
 class PostCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Post
