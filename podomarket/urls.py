@@ -50,6 +50,13 @@ urlpatterns = [
         views.ProfileUpdateView.as_view(),
         name="profile-update",
     ),
+
+    # comment
+    path(
+        'posts/<int:post_id>/comments/create/',
+        views.CommentCreateView.as_view(),
+        name="comment-create",
+    ),
 ]
 
 

@@ -10,7 +10,7 @@ from django.views.generic import (
 from braces.views import LoginRequiredMixin, UserPassesTestMixin
 from allauth.account.views import PasswordChangeView
 from allauth.account.models import EmailAddress
-from .models import Post, User
+from .models import Post, User, Comment
 from .forms import (
     PostCreateForm, 
     PostUpdateForm, 
@@ -41,6 +41,26 @@ class PostDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['form'] = CommentForm()
         return context
+
+class CommentCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    http_method_names = ['post']
+
+    model = Comment
+    form_class = CommentForm
+
+    redirect_unauthenticated_users = True
+    raise_exception = confirmation_required_redirect
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        form.instance.post = Post.objects.get(id=self.kwargs.get('post_id'))
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('post-detail', kwargs={'post_id': self.kwargs.get('post_id')})
+
+    def test_func(self, user):
+        return EmailAddress.objects.filter(user=user, verified=True).exists()
 
 class PostCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Post
