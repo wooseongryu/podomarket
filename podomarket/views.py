@@ -18,6 +18,7 @@ from .forms import (
     CommentForm,
 )
 from .functions import confirmation_required_redirect
+from .mixins import LoginAndOwnershipRequiredMixin, LoginAndVerificationRequiredMixin
 
 
 def index(request):
@@ -42,14 +43,11 @@ class PostDetailView(DetailView):
         context['form'] = CommentForm()
         return context
 
-class CommentCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+class CommentCreateView(LoginAndVerificationRequiredMixin, CreateView):
     http_method_names = ['post']
 
     model = Comment
     form_class = CommentForm
-
-    redirect_unauthenticated_users = True
-    raise_exception = confirmation_required_redirect
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -59,16 +57,11 @@ class CommentCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     def get_success_url(self):
         return reverse('post-detail', kwargs={'post_id': self.kwargs.get('post_id')})
 
-    def test_func(self, user):
-        return EmailAddress.objects.filter(user=user, verified=True).exists()
 
-class PostCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+class PostCreateView(LoginAndVerificationRequiredMixin, CreateView):
     model = Post
     form_class = PostCreateForm
     template_name = 'podomarket/post_form.html'
-
-    redirect_unauthenticated_users = True
-    raise_exception = confirmation_required_redirect
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -77,10 +70,8 @@ class PostCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     def get_success_url(self):
         return reverse('post-detail', kwargs={"post_id": self.object.id})
 
-    def test_func(self, user):
-        return EmailAddress.objects.filter(user=user, verified=True).exists()
 
-class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+class PostUpdateView(LoginAndOwnershipRequiredMixin, UpdateView):
     model = Post
     form_class = PostUpdateForm
     template_name = 'podomarket/post_form.html'
@@ -91,11 +82,8 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def get_success_url(self):
         return reverse('post-detail', kwargs={"post_id": self.object.id})
 
-    def test_func(self, user):
-        post = self.get_object()
-        return post.author == user
 
-class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+class PostDeleteView(LoginAndOwnershipRequiredMixin, DeleteView):
     model = Post
     template_name = 'podomarket/post_confirm_delete.html'
     pk_url_kwarg = 'post_id'
@@ -105,9 +93,6 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def get_success_url(self):
         return reverse('index')
 
-    def test_func(self, user):
-        post = self.get_object()
-        return post.author == user
 
 class ProfileView(DetailView):
     model = User
