@@ -1,6 +1,7 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.views.generic import (
+    View,
     ListView, 
     DetailView, 
     CreateView,
@@ -10,13 +11,14 @@ from django.views.generic import (
 from braces.views import LoginRequiredMixin, UserPassesTestMixin
 from allauth.account.views import PasswordChangeView
 from allauth.account.models import EmailAddress
-from .models import Post, User, Comment
+from .models import Post, User, Comment, Like
 from .forms import (
     PostCreateForm, 
     PostUpdateForm, 
     ProfileForm,
     CommentForm,
 )
+from django.contrib.contenttypes.models import ContentType
 from .functions import confirmation_required_redirect
 from .mixins import LoginAndOwnershipRequiredMixin, LoginAndVerificationRequiredMixin
 
@@ -41,6 +43,8 @@ class PostDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = CommentForm()
+        context['post_ctype_id'] = ContentType.objects.get(model='post').id
+        context['comment_ctype_id'] = ContentType.objects.get(model='comment').id
         return context
 
 class CommentCreateView(LoginAndVerificationRequiredMixin, CreateView):
@@ -73,6 +77,27 @@ class CommentDeleteView(LoginAndOwnershipRequiredMixin, DeleteView):
     
     def get_success_url(self):
         return reverse('post-detail', kwargs={'post_id': self.object.post.id})
+
+class ProcessLikeView(LoginAndVerificationRequiredMixin, View):
+    # post메소드만 허용
+    http_method_names = ['post']
+
+    def post(self, request, *args, **kwargs):
+        # get_or_create는 조건을 만족하는 오브젝트가 있으면
+        # 가져오고 없으면 생성한다.
+        # 첫번째값like는 가져오거나 생성한 오브젝트
+        # 두번째 값은 오브젝트 생성여부 
+        # 새로 생성 했으면 True 아니면 False
+        like, created = Like.objects.get_or_create(
+            user=self.request.user,
+            content_type_id=self.kwargs.get('content_type_id'),
+            object_id=self.kwargs.get('object_id'),
+        )
+        if not created:
+            like.delete()
+        # self.request.META['HTTP_REFERER']는 항상 이 뷰로 
+        # 리퀘스트를 보낸 페이지의 주소를 담고 있다.
+        return redirect(self.request.META['HTTP_REFERER'])
 
 
 class PostCreateView(LoginAndVerificationRequiredMixin, CreateView):
