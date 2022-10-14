@@ -35,6 +35,15 @@ class IndexView(ListView):
     def get_queryset(self):
         return Post.objects.filter(is_sold=False)
 
+class WishlistView(LoginRequiredMixin, ListView):
+    model = Post
+    context_object_name = 'liked_posts'
+    template_name = 'podomarket/wishlist.html'
+    paginate_by = 8
+
+    def get_queryset(self):
+        return Post.objects.filter(likes__user=self.request.user)
+
 class FollowingPostListView(LoginRequiredMixin, ListView):
     model = Post
     context_object_name = 'following_posts'
