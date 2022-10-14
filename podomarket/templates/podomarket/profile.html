@@ -9,7 +9,24 @@
 <div class="podo-card profile-header">
   <div class="profile-pic" style="background-image: url('{{profile_user.profile_pic.url}}')"></div>
   <div class="info">
-    <div class="nickname">{{profile_user.nickname}}</div>
+    <div class="header-row">
+      <span class="nickname">{{ profile_user.nickname }}</span>
+      {% if user.is_authenticated and user != profile_user %}
+        <form action="{% url 'process-follow' profile_user.id %}" method="post">
+          {% csrf_token %}
+          {% if is_following %}
+            <button class="follow-button secondary" type="submit">
+              언팔로우
+            </button>
+          {% else %}
+            <button class="follow-button" type="submit">
+              팔로우
+            </button>
+          {% endif %}
+        </form>
+      {% endif %}
+    </div>
+
     <ul class="podo-links">
       <li>{{profile_user.kakao_id}}</li>
       <li class="divider"></li>

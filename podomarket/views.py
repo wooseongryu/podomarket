@@ -150,9 +150,24 @@ class ProfileView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user_id = self.kwargs.get('user_id')
-        context["user_posts"] = Post.objects.filter(author_id=user_id)[:8]
+        user = self.request.user
+        profile_user_id = self.kwargs.get('user_id')
+        if user.is_authenticated:
+            context['is_following'] = user.following.filter(id=profile_user_id).exists()
+        context['user_posts'] = Post.objects.filter(author__id=profile_user_id)[:8]
         return context
+
+class ProcessFollowView(LoginAndVerificationRequiredMixin, View):
+    http_method_names = ['post']
+
+    def post(self, request, *args, **kwargs):
+        user = self.request.user
+        profile_user_id = self.kwargs.get('user_id')
+        if user.following.filter(id=profile_user_id).exists():
+            user.following.remove(profile_user_id)
+        else:
+            user.following.add(profile_user_id)
+        return redirect('profile', user_id=profile_user_id)
 
 class UserPostListView(ListView):
     model = Post
