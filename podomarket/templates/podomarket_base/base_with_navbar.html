@@ -23,12 +23,12 @@
     {% if user.is_authenticated %}
       <ul class="extra-menu">
         <li class="extra-menu-item">
-          <a href="{% url 'following-post-list' %}">
+          <a href="#">
             <img src="{% static 'podomarket/icons/ic-wishlist.svg' %}" alt="Liked Posts">
           </a>
         </li>
         <li class="extra-menu-item">
-          <a href="#">
+          <a href="{% url 'following-post-list' %}">
             <img src="{% static 'podomarket/icons/ic-all.svg' %}" alt="Following Posts">
           </a>
         </li>
