@@ -45,6 +45,12 @@ class PostDetailView(DetailView):
         context['form'] = CommentForm()
         context['post_ctype_id'] = ContentType.objects.get(model='post').id
         context['comment_ctype_id'] = ContentType.objects.get(model='comment').id
+
+        user = self.request.user
+        if user.is_authenticated:
+            post = self.object
+            context['likes_post'] = Like.objects.filter(user=user, post=post).exists()
+            context['liked_comments'] = Comment.objects.filter(post=post).filter(likes__user=user)
         return context
 
 class CommentCreateView(LoginAndVerificationRequiredMixin, CreateView):

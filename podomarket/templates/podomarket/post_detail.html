@@ -64,8 +64,14 @@
     {% if user.is_authenticated %}
       <form action="{% url 'process-like' post_ctype_id post.id %}" method="post">
         {% csrf_token %}
-        <button class="like-button" type="submit">   
+        <button class="like-button" type="submit">
+
+        {% if likes_post %}
+          <img src="{% static 'podomarket/icons/ic-heart-purple.svg' %}" alt="filled like icon">
+        {% else %}
           <img src="{% static 'podomarket/icons/ic-heart.svg' %}" alt="like icon">
+        {% endif %}
+
           <span> {{ post.likes.count }}</span>
         </button>
       </form>
@@ -116,7 +122,13 @@
           <form action="{% url 'process-like' comment_ctype_id comment.id %}" method="post">
             {% csrf_token %}
             <button class="like-button" type="submit">
-              <img width="15px" src="{% static 'podomarket/icons/ic-heart.svg' %}" alt="like icon">
+
+              {% if comment in liked_comments %}
+                <img width="15px" src="{% static 'podomarket/icons/ic-heart-purple.svg' %}" alt="filled like icon">
+              {% else %}
+                <img width="15px" src="{% static 'podomarket/icons/ic-heart.svg' %}" alt="like icon">
+              {% endif %}   
+
               <span> {{ comment.likes.count }}</span>
             </button>
           </form>
