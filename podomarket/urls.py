@@ -14,6 +14,11 @@ urlpatterns = [
         name='wishlist'
         ),
     path(
+        'search/',
+        views.search_view,
+        name='search'
+    ),
+    path(
         'posts/following/', 
         views.FollowingPostListView.as_view(), 
         name='following-post-list'

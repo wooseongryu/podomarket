@@ -13,6 +13,11 @@
     </a>
   </div>
 
+  <form class="search-form" action="search" method="get">
+    <input class="search-input" name="query" type="text" placeholder="검색어를 입력해주세요" required>
+    <button class="podo-button darkpurple" type="submit">검색</button>
+  </form>
+
   {% include 'components/post_list.html' with posts=posts empty_message="아직 작성된 글이 없어요!" %}
     
   {% include 'components/pagination.html' with page_obj=page_obj %}

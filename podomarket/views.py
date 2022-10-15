@@ -19,6 +19,7 @@ from .forms import (
     CommentForm,
 )
 from django.contrib.contenttypes.models import ContentType
+from django.http import HttpResponse
 from .functions import confirmation_required_redirect
 from .mixins import LoginAndOwnershipRequiredMixin, LoginAndVerificationRequiredMixin
 
@@ -52,6 +53,10 @@ class FollowingPostListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return Post.objects.filter(is_sold=False).filter(author__followers=self.request.user)
+
+def search_view(request):
+    query = request.GET.get('query', '')
+    return HttpResponse(f"검색어: {query}")
 
 class PostDetailView(DetailView):
     model = Post
